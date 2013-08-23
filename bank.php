@@ -1,12 +1,18 @@
 <html>
-<!--//First need to make a sigup/signin page - 1.Need to set a variable to zero or false to detirmine the begining of a session.
+<!--//I. First need to make a signup/signin page - 1.Need to set a variable to zero or false to determine the beginning of a session.
 //2. Need to make 2 href links to either "log in" or "Sign Up"
 //3. for signup, need to create HTML form with fields to enter; firstName, LastName, UserName, AccountNumber, Password, and StartingBalance. Also need submit button.
 //4.need to set the form so the information is sent back to this file, so that it can be written to a .csv file.
-//For sign in option,1. need a form that has 2 feilds for UsserName and PassWord, and a submitt button. 
-//2. Need a methodn to send that info back to this file.
-//3.Need a function to open trhe .csv file and check for a match to the UserNameand if foun, to check for a match in the Password
-//4. Need a function to start a session to hold the connnection until logout.-->
+//II. For sign in option,1. need a form that has 2 fields for UserName and PassWord, and a submit button. 
+//2. Need a method to send that info back to this file.
+//3.Need a function to open the .csv file and check for a match to the UserName and if found, to check for a match in the Password
+//4. Need a function to start a session to hold the connection until logout.
+//III. Add Debits and credits, 1.Need to pull current balance
+//2. Need a form to enter Amount, TransType, checkbox for additional transaction, and submit button.
+//3. need a function to add and subtract to modify the current balance.
+//4. need a function to store the closing balance at the end of a session
+//IV signout button 1. need to make link to signout
+//5. need a destructor to save all the info and close the session.-->
 <head>
     <title>Bank Program</title>
       <style type="text/css">
@@ -32,8 +38,8 @@
       <h1>Welcome to <span>The Bank</span></h1>
 	  <h2>We welcome new customers </h2>
 		<ul>
-			<li><a href="put link here">Open a new account</a></li>
-			<li><a href="put link here">Log in to your account</a></li>
+			<li><a href="bank.php?class=form1">Open a new account</a></li>
+			<li><a href="bank.php?class=form2">Log in to your account</a></li>
 		</ul>
           
 	</body>
