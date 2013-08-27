@@ -37,7 +37,8 @@
     <body>
  <?php  
 	  $obj = new program();
-	  
+	  //$acct_no= rand(1111111, 9999999);
+	   
 		class program {
 		  public function __construct() {		
 			if(isset($_REQUEST['class'])) {
@@ -66,11 +67,19 @@
 		}
         protected function post() {
 			//print_r($_POST);
-			$array=($_POST);
-			echo "You entered:" ;
-			foreach ($array as $key => $val) {
-			    echo  $key . " - " . $val . ";  ";
-			}	
+			$info=($_POST);
+			//echo "You entered:" ;
+			//foreach ($array as $key => $val) {
+			  //  echo  $key . " - " . $val . ";  ";
+			//}	
+			 if(array_key_exists('email', $info)) {
+               echo "You have succesfully opened a new account. <br>" ;
+	            $name = array_shift($info);
+	            $acct_no= rand(1111111, 9999999);
+	               echo "{$name}, your account number is " .$acct_no . '<br> <a href="bank.php?class=form2">Click here to login.</a>';
+            } else { 
+	            echo "Welcome back!". '<br> <a href="bank.php?class=form3">Click here to enter new transactions.</a>';
+		   }
 		}
 	}
     class form1 extends page {
