@@ -1,18 +1,12 @@
 <html>
-<!--//I. First need to make a signup/signin page - 1.Need to set a variable to zero or false to determine the beginning of a session.
+<!--//First need to make a sigup/signin page - 1.Need to set a variable to zero or false to determine the beginning of a session.
 //2. Need to make 2 href links to either "log in" or "Sign Up"
 //3. for signup, need to create HTML form with fields to enter; firstName, LastName, UserName, AccountNumber, Password, and StartingBalance. Also need submit button.
 //4.need to set the form so the information is sent back to this file, so that it can be written to a .csv file.
-//II. For sign in option,1. need a form that has 2 fields for UserName and PassWord, and a submit button. 
-//2. Need a method to send that info back to this file.
-//3.Need a function to open the .csv file and check for a match to the UserName and if found, to check for a match in the Password
-//4. Need a function to start a session to hold the connection until logout.
-//III. Add Debits and credits, 1.Need to pull current balance
-//2. Need a form to enter Amount, TransType, checkbox for additional transaction, and submit button.
-//3. need a function to add and subtract to modify the current balance.
-//4. need a function to store the closing balance at the end of a session
-//IV signout button 1. need to make link to signout
-//5. need a destructor to save all the info and close the session.-->
+//For sign in option,1. need a form that has 2 feilds for UsserName and PassWord, and a submitt button. 
+//2. Need a methodn to send that info back to this file.
+//3.Need a function to open trhe .csv file and check for a match to the UserNameand if foun, to check for a match in the Password
+//4. Need a function to start a session to hold the connnection until logout.-->
 <head>
     <title>Bank Program</title>
       <style type="text/css">
@@ -27,7 +21,13 @@
 		}
 		body{
 		text-align:center;
+		}a{
+		text-decoration:none;
+		color:black;
+		font-family:cursive;
+		font-size:18px;
 		}
+		
 		
 	  </style> 
 		<div id="wrapper" style="width:100%; text-align:center">
@@ -35,14 +35,107 @@
 		</div>
   </head>
     <body>
-      <h1>Welcome to <span>The Bank</span></h1>
-	  <h2>We welcome new customers </h2>
-		<ul>
-			<li><a href="bank.php?class=form1">Open a new account</a></li>
-			<li><a href="bank.php?class=form2">Log in to your account</a></li>
-		</ul>
-          
+ <?php  
+	  $obj = new program();
+	  
+		class program {
+		  public function __construct() {		
+			if(isset($_REQUEST['class'])) {
+				$class = $_REQUEST['class'];
+				$obj = new $class();
+			} else {	
+				$obj = new page();
+			}
+			//print_r($_REQUEST);
+		 }
+	  }
+	  class page {	
+		public function __construct() {
+			if($_SERVER['REQUEST_METHOD'] == 'GET') {
+				$this->get();
+			} else {
+				$this->post();
+			}	
+		}
+		protected function get() {
+		  echo "<h1>Welcome to <span>The Bank</span></h1>
+	            <h2>We welcome new customers </h2>
+		        <ul>";
+			echo '<li><a href="bank.php?class=form1">Open a new account</a></li>';
+			echo '<li><a href="bank.php?class=form2">Log in to your account</a></li></ul>';
+		}
+        protected function post() {
+			//print_r($_POST);
+			$array=($_POST);
+			echo "You entered:" ;
+			foreach ($array as $key => $val) {
+			    echo  $key . " - " . $val . ";  ";
+			}	
+		}
+	}
+    class form1 extends page {
+		public function get() {
+			echo '<h2>Create an account</h2>' . "<br> \n";
+			
+			$form = '<FORM action="bank.php?class=form1" method="post">
+    					 <P>
+   					 <LABEL for="firstname">First name: </LABEL>
+             		  <INPUT type="text" name="firstname" id="firstname" required="required"><BR>
+    			     <LABEL for="lastname">Last name: </LABEL>
+              		  <INPUT type="text" name="lastname" id="lastname" required="required"><BR>
+    				 <LABEL for="email">email: </LABEL>
+                      <INPUT type="text" name="email" id="email" required="required"><BR>
+					 <LABEL for="username">Username: </LABEL>
+                      <INPUT type="text" name="username"id="username" required="required"><BR>
+					 <LABEL for="pswrd">Password: </LABEL>
+                      <INPUT type="password" name="pswd"id="pswd" required="required"><BR>
+                      <INPUT type="submit" value="Send"> <INPUT type="reset">
+                        </P>
+                     </FORM>';
+			
+			echo $form;
+			echo '<a href="bank.php">Click here to return to the homepage.</a>' . "<br> \n";
+		}
+	}
+	class form2 extends page {
+		public function get() {
+			echo '<h2>Sign in to your account</h2>' . "<br> \n";
+			
+			
+			$form = '<FORM action="bank.php?class=form2" method="post">
+    					 <P>
+					  <LABEL for="username">Username: </LABEL>
+                      <INPUT type="text" name="username"id="username" required="required"><BR>
+					  <LABEL for="pswrd">Password: </LABEL>
+                      <INPUT type="password" name="pswd"id="pswd" required="required"><BR>
+                      <INPUT type="submit" value="Send"> <INPUT type="reset">
+                        </P>
+                     </FORM>';
+			
+			echo $form;
+			echo '<a href="bank.php">Click here to return to the homepage.</a>' . "<br> \n";
+		}
+	}
+	class form3 extends page {
+		public function get() {
+			echo '<h2>Enter your transactions</h2>' . "<br> \n";
+			
+			
+			$form = '<FORM action="bank.php?class=form3" method="post">
+    					 <P>
+					  <LABEL for="amount">Amount: </LABEL>
+                      <INPUT type="number" name="amount"id="amount" required="required"><BR>
+					  <INPUT type="radio" name="type" value="debit"> Debit<BR>
+                      <INPUT type="radio" name="type" value="credit"> Credit<BR>
+                      <INPUT type="submit" value="Send"> <INPUT type="reset">
+                        </P>
+                     </FORM>';
+			
+			echo $form;
+			echo '<a href="bank.php">Click here to return to the homepage.</a>' . "<br> \n";
+		}
+	}
+?>			
 	</body>
 </html>
-<?php
-?>
+
