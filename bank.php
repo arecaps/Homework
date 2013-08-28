@@ -1,12 +1,12 @@
 <html>
-<!--//First need to make a sigup/signin page - 1.Need to set a variable to zero or false to determine the beginning of a session.
-//2. Need to make 2 href links to either "log in" or "Sign Up"
+<!--//First need to make a sigup/signin page -Done 1.Need to set a variable to zero or false to determine the beginning of a session.
+//2. Need to make 2 href links to either "log in" or "Sign Up" - Done
 //3. for signup, need to create HTML form with fields to enter; firstName, LastName, UserName, AccountNumber, Password, and StartingBalance. Also need submit button.
 //4.need to set the form so the information is sent back to this file, so that it can be written to a .csv file.
-//For sign in option,1. need a form that has 2 feilds for UsserName and PassWord, and a submitt button. 
-//2. Need a methodn to send that info back to this file.
-//3.Need a function to open trhe .csv file and check for a match to the UserNameand if foun, to check for a match in the Password
-//4. Need a function to start a session to hold the connnection until logout.-->
+//For sign in option,1. need a form that has 2 fields for UsserName and PassWord, and a submit button. 
+//2. Need a method to send that info back to this file.
+//3.Need a function to open the .csv file and check for a match to the UserNameand if found, to check for a match in the Password
+//4. Need a function to start a session to hold the connection until logout.-->
 <head>
     <title>Bank Program</title>
       <style type="text/css">
@@ -37,8 +37,8 @@
     <body>
  <?php  
 	  $obj = new program();
-	  //$acct_no= rand(1111111, 9999999);
-	   
+      $acct_no= rand(1111111, 9999999);
+	  
 		class program {
 		  public function __construct() {		
 			if(isset($_REQUEST['class'])) {
@@ -51,6 +51,7 @@
 		 }
 	  }
 	  class page {	
+	  
 		public function __construct() {
 			if($_SERVER['REQUEST_METHOD'] == 'GET') {
 				$this->get();
@@ -68,17 +69,19 @@
         protected function post() {
 			//print_r($_POST);
 			$info=($_POST);
-			//echo "You entered:" ;
-			//foreach ($array as $key => $val) {
-			  //  echo  $key . " - " . $val . ";  ";
-			//}	
 			 if(array_key_exists('email', $info)) {
-               echo "You have succesfully opened a new account. <br>" ;
-	            $name = array_shift($info);
-	            $acct_no= rand(1111111, 9999999);
-	               echo "{$name}, your account number is " .$acct_no . '<br> <a href="bank.php?class=form2">Click here to login.</a>';
+               echo "<h1>You have succesfully opened a new account. </h1><br>" ;
+	            //$name = array_shift($info);
+				$name = current($info);
+	            $number= rand(1111111, 9999999);
+				$acct_no = array('account_number' => $number);
+				$result = array_merge_recursive($info, $acct_no);
+	               echo "<h2>{$name}, your account number is " .  $number . '<br> <a href="bank.php?class=form2">Click here to login.</a></h2>';
+				     $obj = new write();
+					 $obj->write_csv($result);
+				    //print_r($result);
             } else { 
-	            echo "Welcome back!". '<br> <a href="bank.php?class=form3">Click here to enter new transactions.</a>';
+	            echo "<h1>Welcome back!</h1>". '<br> <a href="bank.php?class=form3">Click here to enter new transactions.</a>';
 		   }
 		}
 	}
@@ -143,6 +146,23 @@
 			echo $form;
 			echo '<a href="bank.php">Click here to return to the homepage.</a>' . "<br> \n";
 		}
+	}
+	class write {
+	  function write_csv($result) {
+	    
+			$keys =array_keys($result);
+			$values=array_values($result);
+			$user=array($keys, $values);
+		
+				$fp = fopen('users.csv', 'w');
+
+					foreach ($user as $fields) {
+					  fputcsv($fp, $fields);
+					}
+					
+			//print_r($user);
+				fclose($fp);
+		}		
 	}
 ?>			
 	</body>
