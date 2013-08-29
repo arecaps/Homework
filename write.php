@@ -6,13 +6,17 @@
 		$keys =array_keys($list);
 		$values=array_values($list);
 		$user=array($keys, $values);
-	
-			$fp = fopen('users.csv', 'w');
-
-				foreach ($user as $fields) {
-				  fputcsv($fp, $fields);
+		$name = $values[3];
+		
+				if (!file_exists("{$name}.csv")) {
+				    $fp = fopen("{$name}.csv", 'w');
+					  foreach ($user as $fields) {
+					  fputcsv($fp, $fields);
+					}
+						fclose($fp);	
+				} else {
+					echo "Sorry, that username is not available, please choose another name";
 				}
-				
-		//print_r($user);
-			fclose($fp);
+		//print_r($name);
+
 ?>
