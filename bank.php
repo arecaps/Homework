@@ -37,7 +37,7 @@
     <body>
  <?php  
 	  $obj = new program();
-      $acct_no= rand(1111111, 9999999);
+      //$acct_no= rand(1111111, 9999999);
 	  
 		class program {
 		  public function __construct() {		
@@ -57,39 +57,37 @@
 				$this->get();
 			} else {
 				$this->post();
+				//print_r($_SERVER);
 			}	
 		}
 		protected function get() {
 		  echo "<h1>Welcome to <span>The Bank</span></h1>
 	            <h2>We welcome new customers </h2>
 		        <ul>";
-			echo '<li><a href="bank.php?class=form1">Open a new account</a></li>';
-			echo '<li><a href="bank.php?class=form2">Log in to your account</a></li></ul>';
+			echo '<li><a href="fix.php?class=form1">Open a new account</a></li>';
+			echo '<li><a href="fix.php?class=form2">Log in to your account</a></li></ul>';
 		}
         protected function post() {
 			//print_r($_POST);
-			$info=($_POST);
-			 if(array_key_exists('email', $info)) {
-               echo "<h1>You have succesfully opened a new account. </h1><br>" ;
-	            //$name = array_shift($info);
-				$name = current($info);
-	            $number= rand(1111111, 9999999);
-				$acct_no = array('account_number' => $number);
-				$result = array_merge_recursive($info, $acct_no);
-	               echo "<h2>{$name}, your account number is " .  $number . '<br> <a href="bank.php?class=form2">Click here to login.</a></h2>';
-				     $obj = new write();
-					 $obj->write_csv($result);
-				    //print_r($result);
-            } else { 
-	            echo "<h1>Welcome back!</h1>". '<br> <a href="bank.php?class=form3">Click here to enter new transactions.</a>';
-		   }
+			print_r($_SERVER['QUERY_STRING']);
+			if ($_SERVER['QUERY_STRING'] == 'class=form1') {
+				$obj = new write();
+				$obj->write_csv();
+            } elseif ($_SERVER['QUERY_STRING'] == 'class=form2'){ 
+					echo "<h1>Welcome back!</h1>". '<br> <a href="fix.php?class=form3">Click here to enter new transactions.</a>';
+		    } elseif ($_SERVER['QUERY_STRING'] == 'class=form3'){ 
+					echo "<h1>Thank You</h1>". '<br> <a href="fix.php?class=form3">Click here to enter another transaction.</a>';
+			} else {
+				echo 'error';
+			}
 		}
 	}
     class form1 extends page {
 		public function get() {
 			echo '<h2>Create an account</h2>' . "<br> \n";
+			print_r($_SERVER['QUERY_STRING']);
 			
-			$form = '<FORM action="bank.php?class=form1" method="post">
+			$form = '<FORM action="fix.php?class=form1" method="post">
     					 <P>
    					 <LABEL for="firstname">First name: </LABEL>
              		  <INPUT type="text" name="firstname" id="firstname" required="required"><BR>
@@ -106,15 +104,15 @@
                      </FORM>';
 			
 			echo $form;
-			echo '<a href="bank.php">Click here to return to the homepage.</a>' . "<br> \n";
+			echo '<a href="fix.php">Click here to return to the homepage.</a>' . "<br> \n";
 		}
 	}
 	class form2 extends page {
 		public function get() {
 			echo '<h2>Sign in to your account</h2>' . "<br> \n";
+			print_r($_SERVER['QUERY_STRING']);
 			
-			
-			$form = '<FORM action="bank.php?class=form2" method="post">
+			$form = '<FORM action="fix.php?class=form2" method="post">
     					 <P>
 					  <LABEL for="username">Username: </LABEL>
                       <INPUT type="text" name="username"id="username" required="required"><BR>
@@ -125,46 +123,55 @@
                      </FORM>';
 			
 			echo $form;
-			echo '<a href="bank.php">Click here to return to the homepage.</a>' . "<br> \n";
+			echo '<a href="fix.php">Click here to return to the homepage.</a>' . "<br> \n";
 		}
 	}
 	class form3 extends page {
 		public function get() {
 			echo '<h2>Enter your transactions</h2>' . "<br> \n";
+			print_r($_SERVER['QUERY_STRING']);
 			
 			
-			$form = '<FORM action="bank.php?class=form3" method="post">
+			$form = '<FORM action="fix.php?class=form3" method="post">
     					 <P>
 					  <LABEL for="amount">Amount: </LABEL>
-                      <INPUT type="number" name="amount"id="amount" required="required"><BR>
-					  <INPUT type="radio" name="type" value="debit"> Debit<BR>
-                      <INPUT type="radio" name="type" value="credit"> Credit<BR>
+                      <INPUT type="text" name="amount"id="amount" required="required"><BR>
+					  <INPUT type="radio" name="type" value="debit" required="required"> Debit<BR>
+                      <INPUT type="radio" name="type" value="credit" required="required"> Credit<BR>
                       <INPUT type="submit" value="Send"> <INPUT type="reset">
                         </P>
                      </FORM>';
 			
 			echo $form;
-			echo '<a href="bank.php">Click here to return to the homepage.</a>' . "<br> \n";
+			echo '<a href="fix.php">Click here to return to the homepage.</a>' . "<br> \n";
 		}
 	}
 	class write {
-	  function write_csv($result) {
-	    
+	    function write_csv() {
+			print_r($_POST);
+			$info=($_POST);
+				$name = current($info);
+				$number= rand(1111111, 9999999);
+				$acct_no = array('account_number' => $number);
+				$result = array_merge_recursive($info, $acct_no);
+					echo "<h1>You have succesfully opened a new account. </h1><br>" ;			
+					echo "<h2>{$name}, your account number is " .  $number . '<br> <a href="fix.php?class=form2">Click here to login.</a></h2>';
 			$keys =array_keys($result);
 			$values=array_values($result);
 			$user=array($keys, $values);
+                        $name = $values[3];
 		
-				$fp = fopen('users.csv', 'w');
-
-					foreach ($user as $fields) {
+				if (!file_exists("{$name}.csv")) {
+				    $fp = fopen("{$name}.csv", 'w');
+					  foreach ($user as $fields) {
 					  fputcsv($fp, $fields);
 					}
-					
-			//print_r($user);
-				fclose($fp);
-		}		
-	}
+						fclose($fp);	
+				} else {
+					echo "Sorry, that username is not available, please choose another name";
+				}
+		}
+	}	
 ?>			
 	</body>
 </html>
-
