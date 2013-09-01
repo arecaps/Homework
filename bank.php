@@ -74,7 +74,9 @@
 				$obj = new write();
 				$obj->write_csv();
             } elseif ($_SERVER['QUERY_STRING'] == 'class=form2'){ 
-					echo "<h1>Welcome back!</h1>". '<br> <a href="bank.php?class=form3">Click here to enter new transactions.</a>';
+				$login = ($_POST);
+					$obj =new validate;
+					$obj->checkName($login);
 		    } elseif ($_SERVER['QUERY_STRING'] == 'class=form3'){ 
 					echo "<h1>Thank You</h1>". '<br> <a href="bank.php?class=form3">Click here to enter another transaction.</a>';
 			} else {
@@ -117,7 +119,7 @@
 					  <LABEL for="username">Username: </LABEL>
                       <INPUT type="text" name="username"id="username" required="required"><BR>
 					  <LABEL for="pswrd">Password: </LABEL>
-                      <INPUT type="password" name="pswd"id="pswd" required="required"><BR>
+                      <INPUT type="password" name="pswrd"id="pswrd" required="required"><BR>
                       <INPUT type="submit" value="Send"> <INPUT type="reset">
                         </P>
                      </FORM>';
@@ -171,6 +173,37 @@
 						
 				} else {
 					echo "Sorry, that username is not available, please choose another name";
+				}
+		}
+	}
+
+	class validate {
+		function checkName($login) {
+				$users = $login['username'];
+				//print_r($users);
+
+				$first_run = TRUE;
+				if ((@$handle = fopen("{$users}.csv", "r")) !== FALSE) {
+					while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
+						if ($first_run == TRUE) {
+							$field_names = $data;
+							$first_run   = FALSE;
+						} else {
+							$data      = array_combine($field_names, $data);
+							$records = $data;;
+						}	
+					} 
+					fclose($handle); 
+						if ($records['pswd'] == $login['pswrd']) {
+							echo "<h1>Welcome back!</h1>". '<br> <a href="bank.php?class=form3">Click here to enter new transactions.</a>';
+						} else { 
+							echo 'Sorry, that password does not match, please try again.  <br> <br>
+					<a href="bank.php?class=form2">Click here to re-enter your login information.</a>';
+						}
+				} else {
+					echo 'Sorry, that username was not found, please try again.  <br> <br>
+					<a href="bank.php?class=form2">Click here to re-enter your login information.</a> <br> <br>
+					<a href="bank.php?class=form1">Don\'t have an account? Click here to open one.</a>';
 				}
 		}
 	}	
