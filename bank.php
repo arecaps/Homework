@@ -68,17 +68,20 @@
 			echo '<li><a href="bank.php?class=form2">Log in to your account</a></li></ul>';
 		}
         protected function post() {
-			//print_r($_POST);
-			//print_r($_SERVER['QUERY_STRING']);
 			if ($_SERVER['QUERY_STRING'] == 'class=form1') {
 				$obj = new write();
 				$obj->write_csv();
             } elseif ($_SERVER['QUERY_STRING'] == 'class=form2'){ 
-				$login = ($_POST);
+				//$login = ($_POST);
 					$obj =new validate;
-					$obj->checkName($login);
+					$obj->checkName();
 		    } elseif ($_SERVER['QUERY_STRING'] == 'class=form3'){ 
-					echo "<h1>Thank You</h1>". '<br> <a href="bank.php?class=form3">Click here to enter another transaction.</a>';
+				//print_r($_POST);
+				$obj = new transactions();
+				$obj->write_trans();
+					//echo "<h1>Thank You</h1>". '<br> <a href="bank.php?class=form3">Click here to enter another transaction.</a>';
+			} elseif ($_SERVER['QUERY_STRING'] == 'class=logout'){ 
+				
 			} else {
 				echo 'error';
 			}
@@ -87,7 +90,6 @@
     class form1 extends page {
 		public function get() {
 			echo '<h2>Create an account</h2>' . "<br> \n";
-			//print_r($_SERVER['QUERY_STRING']);
 			
 			$form = '<FORM action="bank.php?class=form1" method="post">
     					 <P>
@@ -112,7 +114,6 @@
 	class form2 extends page {
 		public function get() {
 			echo '<h2>Sign in to your account</h2>' . "<br> \n";
-			//print_r($_SERVER['QUERY_STRING']);
 			
 			$form = '<FORM action="bank.php?class=form2" method="post">
     					 <P>
@@ -131,8 +132,6 @@
 	class form3 extends page {
 		public function get() {
 			echo '<h2>Enter your transactions</h2>' . "<br> \n";
-			//print_r($_SERVER['QUERY_STRING']);
-			
 			
 			$form = '<FORM action="bank.php?class=form3" method="post">
     					 <P>
@@ -146,11 +145,11 @@
 			
 			echo $form;
 			echo '<a href="bank.php">Click here to return to the homepage.</a>' . "<br> \n";
+			echo '<br> <br> <br> <a href="bank.php?class=logout">Logout.</a>';
 		}
 	}
 	class write {
 	    function write_csv() {
-			//print_r($_POST);
 			$info=($_POST);
 				$name = current($info);
 				$number= rand(1111111, 9999999);
@@ -178,9 +177,9 @@
 	}
 
 	class validate {
-		function checkName($login) {
+		function checkName() {
+			$login =($_POST);
 				$users = $login['username'];
-				//print_r($users);
 
 				$first_run = TRUE;
 				if ((@$handle = fopen("{$users}.csv", "r")) !== FALSE) {
@@ -196,6 +195,10 @@
 					fclose($handle); 
 						if ($records['pswd'] == $login['pswrd']) {
 							echo "<h1>Welcome back!</h1>". '<br> <a href="bank.php?class=form3">Click here to enter new transactions.</a>';
+							echo '<br> <br> <br> <a href="bank.php?class=logout">Logout.</a>';
+							session_start();
+							$_SESSION['username'] = $users;
+							//print_r($_SESSION);
 						} else { 
 							echo 'Sorry, that password does not match, please try again.  <br> <br>
 					<a href="bank.php?class=form2">Click here to re-enter your login information.</a>';
@@ -206,7 +209,39 @@
 					<a href="bank.php?class=form1">Don\'t have an account? Click here to open one.</a>';
 				}
 		}
-	}	
+	}
+	class transactions {
+		function write_trans() {	
+			$test = ($_POST);
+			session_start();
+			print_r($_SESSION);
+			if (($_SESSION)==NULL) {
+				echo '<a href="bank.php?class=form2">Your session has ended. Please click here to login again.</a>';
+			} else {
+			$sessn = ($_SESSION);
+				$name = $sessn['username'];
+				$keys =array_keys($test);
+				$values=array_values($test);
+				$trans=array($keys, $values);
+				print_r($trans);
+					$fp = fopen("{$name}.csv", 'a');
+						foreach ($trans as $fields) {
+						fputcsv($fp, $fields);
+						}
+						fclose($fp);	
+			echo "<h1>Thank You</h1>". '<br> <a href="bank.php?class=form3">Click here to enter another transaction.</a>';
+			echo '<br> <br> <br> <a href="bank.php?class=logout">Logout.</a>';
+			}
+		}
+	}
+	class logout {
+		function __construct() {
+			session_start();
+			print_r($_SESSION);
+			echo "<h1>Thank You. We appreciate your business, please come back soon.</h1>";
+				session_destroy();
+		}
+	}
 ?>			
 	</body>
 </html>
