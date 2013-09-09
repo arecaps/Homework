@@ -144,8 +144,8 @@
                      </FORM>';
 			
 			echo $form;
-			echo '<a href="bank.php">Click here to return to the homepage.</a>' . "<br> \n";
-			echo '<br> <br> <br> <a href="bank.php?class=logout">Logout.</a>';
+			echo '<a href="bank.php">Click here to return to the homepage.</a>' . "<br> ";
+			echo '<br> <br> <a href="bank.php?class=logout">Logout.</a>';
 		}
 	}
 	class write {
@@ -160,6 +160,7 @@
 			$values=array_values($result);
 			$user=array($keys, $values);
                         $name = $values[3];
+						$fname = $values[0];
 		
 				if (!file_exists("{$name}.csv")) {
 				    $fp = fopen("{$name}.csv", 'w');
@@ -168,7 +169,7 @@
 					}
 						fclose($fp);	
 							echo "<h1>You have succesfully opened a new account. </h1><br>" ;			
-							echo "<h2>{$name}, your account number is " .  $number . '<br> <a href="bank.php?class=form2">Click here to login.</a></h2>';
+							echo "<h2>{$fname}, your account number is " .  $number . '<br> <a href="bank.php?class=form2">Click here to login.</a></h2>';
 						
 				} else {
 					echo "Sorry, that username is not available, please choose another name";
@@ -214,21 +215,14 @@
 		function write_trans() {	
 			$test = ($_POST);
 			session_start();
-			print_r($_SESSION);
+			//print_r($_SESSION);
 			if (($_SESSION)==NULL) {
 				echo '<a href="bank.php?class=form2">Your session has ended. Please click here to login again.</a>';
 			} else {
-			$sessn = ($_SESSION);
-				$name = $sessn['username'];
-				$keys =array_keys($test);
-				$values=array_values($test);
-				$trans=array($keys, $values);
-				print_r($trans);
-					$fp = fopen("{$name}.csv", 'a');
-						foreach ($trans as $fields) {
-						fputcsv($fp, $fields);
-						}
-						fclose($fp);	
+				$name = ($_SESSION['username']);
+				$fp = fopen("{$name}trns.csv", 'a');
+					fputcsv($fp, $test);
+					fclose($fp);
 			echo "<h1>Thank You</h1>". '<br> <a href="bank.php?class=form3">Click here to enter another transaction.</a>';
 			echo '<br> <br> <br> <a href="bank.php?class=logout">Logout.</a>';
 			}
