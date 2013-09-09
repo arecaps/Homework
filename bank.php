@@ -224,8 +224,37 @@
 					fputcsv($fp, $test);
 					fclose($fp);
 			echo "<h1>Thank You</h1>". '<br> <a href="bank.php?class=form3">Click here to enter another transaction.</a>';
-			echo '<br> <br> <br> <a href="bank.php?class=logout">Logout.</a>';
+			echo '<br><br> <a href="bank.php?class=read_transactions">Click here for your current balance.</a>' .
+			'<br><br> <a href="bank.php?class=logout">Logout.</a>';
 			}
+		}
+	}
+	class read_transactions {
+		function __construct() {
+			session_start();
+			$name = ($_SESSION['username']);
+			$balance =0;
+			$subtract =0;
+				@$handle = fopen("{$name}trns.csv", "r");
+					while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
+						$records[] = $data;	
+					}	 
+					fclose($handle);
+					foreach ($records as $row) {
+						${($row[1]).'s'}[] = $row;
+						}
+					foreach ($credits as $add) {
+						$balance = ($balance + $add[0]);
+						}
+						//print_r($balance);
+					foreach ($debits as $sub) {
+						$subtract = ($subtract + $sub[0]);
+						}
+						//print_r($subtract);
+					$current = ($balance - $subtract);
+					echo "<h1>Your current balance is \$$current .<br></h1>";
+						include 'file.php';
+					
 		}
 	}
 	class logout {
